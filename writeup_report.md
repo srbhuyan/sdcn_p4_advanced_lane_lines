@@ -95,8 +95,8 @@ Here's a [link to my video result](./project_video_out.mp4)
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
 
-Outlier Rejection:
+#####Outlier Rejection:
 The curve fitting I am using is very sensitive to presence of outliers in the identified pixels. The fitted deviates from the lane lines significcantly when ther are outlier pixels in the identified pixel set. This can be improved by implementing outlier identification and rejection techniques.
 
-Challenge Video:
+#####Challenge Video:
 My pipeline does not work very well on the `challenge_video.mp4`. It looks like the thresholding parameters I am using does not effectively identify the lane lines in the challenge video. To identify the lane lines I will have to try different combinations of color spaces (HLS, HLV etc) or a combination of mutiple color spaces. Using low pass and high pass image filters in combination with color spaces will give a better result.
