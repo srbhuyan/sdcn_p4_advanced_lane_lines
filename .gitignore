@@ -1,4 +1,4 @@
 __pycache__/
 *bak.py
 .DS_Store
-
+*.swp

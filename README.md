@@ -1,35 +1,102 @@
-## Advanced Lane Finding
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+##Advanced Lane Line Detection
 
+[//]: # (Image References)
 
-In this project, your goal is to write a software pipeline to identify the lane boundaries in a video, but the main output or product we want you to create is a detailed writeup of the project.  Check out the [writeup template](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup.  
+[image1]: ./output_images/chess_undistorted.png "Chess Distort"
+[image2]: ./output_images/original.jpg "Road Distorted"
+[image3]: ./output_images/undist.jpg "Road Undistorted"
+[image4]: ./output_images/binary.jpg "Road Binary"
+[image5]: ./output_images/undist_warped.png "Road Warped"
+[image6]: ./output_images/sliding_window.jpg "Sliding Window"
+[image7]: ./output_images/targeted_search.jpg "Targeted Search"
+[image8]: ./output_images/image_final.jpg "Draw To Road"
 
-Creating a great writeup:
+[video1]: ./project_video_out.mp4 "Video"
+
+###Camera Calibration
+
+The code for this step is contained in lines 18 through 53 in the file named `camera_calibration.py`.
+
+I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
+
+I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained the following result. The image on the left is a distorted chessboeard image and the one on the right is the result after applying undistort.
+
+![alt text][image1]
+
+###Pipeline (single images)
+####Distortion Correction
+The code to undistort an image is in lines 55 through 64 in the file `camera_calibration.py`. The following images provide an example of how undistortion is applied to road images. The first image is a distorted road image and second image is obtained by applying distortion correction.
+![alt text][image2]
+![alt text][image3]
+
+####Gradient and Color Transforms To Get Binary image
+I used a combination of color and gradient thresholds to generate a binary image. The code is in lines 17 through 45 in the file `main.py`. Here's an example of my output for this step.
+
+![alt text][image4]
+
+####Perspective transform
+
+The code for my perspective transform is in a function called `perspective_transform()`, which appears in lines 72 through 90 in the file `camera_calibration.py`.  The `perspective_transform()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points. I used the source and destination points in the following manner:
+
+```
+src = np.float32([[580,460], [710,460], [1150,720], [150,720]])
+offset = 200
+dst = np.float32([ [offset, 0],
+                   [test_img_size[0]-offset, 0],
+                   [test_img_size[0]-offset, test_img_size[1]-0],
+                   [offset, test_img_size[1]-0]
+                 ])
+
+```
+This resulted in the following source and destination points:
+
+| Source        | Destination   |
+|:-------------:|:-------------:|
+| 580, 460      | 200, 0        |
+| 710, 460      | 1080, 0       |
+| 1150, 720     | 1080, 720     |
+| 150, 720      | 200, 720      |
+
+I verified that my perspective transform was working as expected comparing the test image and its warped counterpart to verify that the lane lines appear parallel in the warped image.
+
+![alt text][image5]
+
+#####Polynomial Fit To Lane Line Pixels
+
+The code that identifies the lane line pixels using the sliding window search on a histogram is in the function names `histogram_search()` (lines 30 through 98) in the file `find_lane_lines.py`. Once the lines are extablished by sliding window the subsequent frames use the code in function `targeted_search()` (lines 148 through 169) in file `file_lane_lines.py`. The result of fitting a line to the lane line pixels using the sliding window method is as show below:
+
+![alt text][image6]
+
+The result of the targeted search is as show below:
+
+![alt text][image7]
+
+####Lane Curvature and Vehicle Position
+
+I code used to calculate the radius of curvature is in the function `curvature()` in lines 233 through 246 in the file `find_lane_lines.py`. Lines 275 through 283 in the file `find_lane_lines.py` is used to compute the position of the vehicle with respect to center.
+
+####Final Result
+
+I implemented this step in lines 249 through 293 in my code in `find_lane_lines.py` in the function `draw_to_road()`.  Here is an example of my result on a test image:
+
+![alt text][image8]
+
 ---
-A great writeup should include the rubric points as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
 
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
+###Video Result
 
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
+Here's a [link to my video result](./project_video_out.mp4)
 
-The Project
 ---
 
-The goals / steps of this project are the following:
+###Discussion
 
-* Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
-* Apply a distortion correction to raw images.
-* Use color transforms, gradients, etc., to create a thresholded binary image.
-* Apply a perspective transform to rectify binary image ("birds-eye view").
-* Detect lane pixels and fit to find the lane boundary.
-* Determine the curvature of the lane and vehicle position with respect to center.
-* Warp the detected lane boundaries back onto the original image.
-* Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
+####Issues and Future Improvements
 
-The images for camera calibration are stored in the folder called `camera_cal`.  The images in `test_images` are for testing your pipeline on single frames.  If you want to extract more test images from the videos, you can simply use an image writing method like `cv2.imwrite()`, i.e., you can read the video in frame by frame as usual, and for frames you want to save for later you can write to an image file.  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
 
-To help the reviewer examine your work, please save examples of the output from each stage of your pipeline in the folder called `ouput_images`, and include a description in your writeup for the project of what each image shows.    The video called `project_video.mp4` is the video your pipeline should work well on.  
+#####Outlier Rejection:
+The curve fitting I am using is very sensitive to presence of outliers in the identified pixels. The fitted deviates from the lane lines significcantly when ther are outlier pixels in the identified pixel set. This can be improved by implementing outlier identification and rejection techniques.
 
-The `challenge_video.mp4` video is an extra (and optional) challenge for you if you want to test your pipeline under somewhat trickier conditions.  The `harder_challenge.mp4` video is another optional challenge and is brutal!
-
-If you're feeling ambitious (again, totally optional though), don't stop there!  We encourage you to go out and take video of your own, calibrate your camera and show us how you would implement this project from scratch!
+#####Challenge Video:
+My pipeline does not work very well on the `challenge_video.mp4`. It looks like the thresholding parameters I am using does not effectively identify the lane lines in the challenge video. To identify the lane lines I will have to try different combinations of color spaces (HLS, HLV etc) or a combination of mutiple color spaces. Using low pass and high pass image filters in combination with color spaces will give a better result.
