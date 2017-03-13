@@ -3,7 +3,7 @@
 [//]: # (Image References)
 
 [image1]: ./output_images/chess_undistorted.png "Chess Distort"
-[image2]: ./output_images/straight_lines2.jpg "Road Distorted"
+[image2]: ./output_images/original.jpg "Road Distorted"
 [image3]: ./output_images/undist.jpg "Road Undistorted"
 [image4]: ./output_images/binary.jpg "Road Binary"
 [image5]: ./output_images/undist_warped.png "Road Warped"
