@@ -25,16 +25,16 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 ###Pipeline (single images)
 ####Distortion Correction
-The following images provide an example of how undistortion is applied to road images. The image on the left is a distorted road image and the image on the right has distortion correction applied.
+The code to undistort an image is in lines 55 through 64 in the file `camera_calibration.py`. The following images provide an example of how undistortion is applied to road images. The image on the left is a distorted road image and the image on the right has distortion correction applied.
 ![alt text][image2]
 ![alt text][image3]
 
-####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines 8 through 48 in `image_processor.py`).  Here's an example of my output for this step.
+####Gradient and Color Transforms To Get Binary image
+I used a combination of color and gradient thresholds to generate a binary image. The code is in lines 17 through 45 in the file `main.py`. Here's an example of my output for this step.
 
 ![alt text][image4]
 
-####3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+####Perspective transform
 
 The code for my perspective transform is in a function called `perspective_transform()`, which appears in lines 72 through 90 in the file `camera_calibration.py`.  The `perspective_transform()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points. I used the source and destination points in the following manner:
 
@@ -61,7 +61,7 @@ I verified that my perspective transform was working as expected comparing the t
 
 ![alt text][image5]
 
-####4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+#####Polynomial Fit To Lane Line Pixels
 
 The code that identifies the lane line pixels using the sliding window search on a histogram is in the function names `histogram_search()` (lines 30 through 98) in the file `find_lane_lines.py`. Once the lines are extablished by sliding window the subsequent frames use the code in function `targeted_search()` (lines 148 through 169) in file `file_lane_lines.py`. The result of fitting a line to the lane line pixels using the sliding window method is as show below:
 
@@ -71,11 +71,11 @@ The result of the targeted search is as show below:
 
 ![alt text][image7]
 
-####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
+####Lane Curvature and Vehicle Position
 
 I code used to calculate the radius of curvature is in the function `curvature()` in lines 233 through 246 in the file `find_lane_lines.py`. Lines 275 through 283 in the file `find_lane_lines.py` is used to compute the position of the vehicle with respect to center.
 
-####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+####Final Result
 
 I implemented this step in lines 249 through 293 in my code in `find_lane_lines.py` in the function `draw_to_road()`.  Here is an example of my result on a test image:
 
@@ -83,9 +83,7 @@ I implemented this step in lines 249 through 293 in my code in `find_lane_lines.
 
 ---
 
-###Pipeline (video)
-
-####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
+###Video Result
 
 Here's a [link to my video result](./project_video_out.mp4)
 
@@ -93,7 +91,7 @@ Here's a [link to my video result](./project_video_out.mp4)
 
 ###Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+####Issues and Future Improvements
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
 
